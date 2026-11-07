@@ -1,0 +1,19 @@
+name: astrbot_plugin_wmpvp_csgo
+display_name: CS 赛事助手
+desc: CS2/CSGO 赛事查询、队伍/赛事订阅与自动推送。赛程、比分、逐图 5v5 数据、战队支持率、VRS 积分、热评，多数据源自动回退，无需 API Key。
+version: v1.2.0
+author: shumatusu
+repo: https://github.com/shumatusu/astrbot_plugin_csgo_match
+help: |
+  /csgo 赛程 [今天|明天|日期]  赛事列表
+  /csgo 详情 <比赛ID>          高保真数据卡
+  /csgo 比分 <队伍>            队伍相关比赛
+  /csgo 评论 <比赛ID> [条数]   热门评论
+  /csgo 队伍订阅 <队伍>        支持缩写/别名
+  /csgo 赛事订阅 <赛事>        支持简称/全名/语义匹配
+  /csgo 队伍取消 <队伍>
+  /csgo 赛事取消 <赛事>
+  /csgo 我的订阅               仅显示当前会话
+  /csgo 数据源 [auto|...]      查看/切换本群数据源
+  /csgo 诊断                   排查不推送/没有图
+  /csgo 测试 渲染|推送|API     调试指令

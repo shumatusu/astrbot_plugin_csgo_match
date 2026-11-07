@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<!-- 告诉 t2i 服务用 720 宽视口截图，避免出现右侧留白（服务会解析这个 meta） -->
+<meta name="viewport" content="width=720">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  /* 隐藏滚动条：否则会占掉 15px 布局宽度，导致右侧出现白边或内容被挤 */
+  ::-webkit-scrollbar{width:0;height:0}
+  html{scrollbar-width:none}
+  html,body{background:#ffffff}
+  body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",Roboto,sans-serif;
+       color:#12161c;-webkit-font-smoothing:antialiased}
+  #card{width:720px;margin:0 auto;background:#ffffff;border:1px solid #e8eaee;
+        border-radius:20px;padding:24px 26px 16px}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:14px}
+  .event{font-size:17px;font-weight:700;letter-spacing:.2px;overflow:hidden;
+         text-overflow:ellipsis;white-space:nowrap;max-width:520px}
+  .badge{font-size:12px;font-weight:600;padding:4px 11px;border-radius:999px;white-space:nowrap}
+  .badge.live{background:#fdeceb;color:#c62828}
+  .badge.upcoming{background:#edf2ff;color:#2f5fd0}
+  .badge.finished{background:#f1f3f5;color:#5f6b7a}
+  .meta{margin-top:7px;font-size:12px;color:#8a94a3}
+  .score-row{display:flex;align-items:center;justify-content:space-between;margin:20px 0 4px}
+  .team{width:200px;text-align:center}
+  .logo{width:76px;height:76px;border-radius:18px;background:#f5f6f8;margin:0 auto 10px;
+        position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .logo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+  .logo .ph{display:none;font-size:26px;font-weight:800;color:#c2c8d2}
+  .logo.noimg .ph{display:block}
+  .tname{font-size:15px;font-weight:700;line-height:1.3}
+  .score{flex:1;text-align:center}
+  .nums{font-size:44px;font-weight:800;line-height:1;letter-spacing:1px}
+  .nums .win{color:#12161c}
+  .nums .lose{color:#9aa4b2}
+  .colon{margin:0 12px;color:#c8ced8;font-weight:600}
+  .sub{font-size:12px;color:#8a94a3;margin-top:8px}
+  .section{margin-top:18px}
+  .section-title{font-size:11px;font-weight:700;color:#8a94a3;letter-spacing:1.4px;
+                 margin-bottom:8px}
+
+  /* 战队支持率 */
+  .sup-wrap{background:#fafbfc;border-radius:10px;padding:10px 12px}
+  .sup-nums{display:flex;align-items:baseline;justify-content:space-between;
+            font-size:12px;margin-bottom:7px}
+  .sup-a{font-weight:800;font-size:15px;color:#c8102e}
+  .sup-b{font-weight:800;font-size:15px;color:#1f6fd0}
+  .sup-t{color:#8a94a3;font-size:11px;text-align:center;flex:1;padding:0 8px;
+         white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sup-bar{display:flex;height:8px;border-radius:5px;overflow:hidden;background:#e8eaee}
+  .sup-seg{height:100%}
+  .sup-seg-a{background:linear-gradient(90deg,#e03e52,#c8102e)}
+  .sup-seg-b{background:linear-gradient(90deg,#4a8fe0,#1f6fd0)}
+
+  /* 赛前预告：倒计时 + 热评 */
+  .countdown{display:inline-flex;align-items:center;gap:6px;margin-top:8px;
+             padding:4px 10px;border-radius:999px;background:#fff4e6;color:#c26a00;
+             font-size:11px;font-weight:700}
+  .cmt{background:#fafbfc;border-radius:10px;padding:9px 12px;margin-bottom:8px}
+  .cmt:last-child{margin-bottom:0}
+  .cmt-head{display:flex;align-items:center;justify-content:space-between;
+            font-size:11px;color:#8a94a3;margin-bottom:4px}
+  .cmt-user{font-weight:700;color:#3d4653}
+  .cmt-like{color:#e8792a;font-weight:700}
+  .cmt-body{font-size:12px;color:#2b323c;line-height:1.5;
+            display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;
+            overflow:hidden}
+
+  /* VRS 积分 */
+  .vrs{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
+  .vrs th{font-weight:600;color:#a4adba;font-size:10px;text-align:right;padding:0 6px 6px 0;
+          border-bottom:1px solid #eef1f5}
+  .vrs th.name{text-align:left;padding-left:2px}
+  .vrs td{padding:7px 6px 7px 0;text-align:right;border-bottom:1px solid #f4f6f8}
+  .vrs td.name{text-align:left;padding-left:2px;width:42%}
+  .vrs tr:last-child td{border-bottom:none}
+  .vrs .pname{display:flex;align-items:center;gap:7px;font-weight:600}
+  .vrs .mono{font-variant-numeric:tabular-nums;font-weight:700}
+  .vrs .dim{color:#9aa4b2;font-weight:600}
+  .vrs .up{color:#c8102e}
+  .vrs .down{color:#1a8b4a}
+  .vrs .flat{color:#b3bcc8}
+  .vrs-dot{width:18px;height:18px;border-radius:50%;flex:0 0 auto;display:flex;
+           align-items:center;justify-content:center;font-size:9px;font-weight:800;
+           color:#fff}
+  .dot-a{background:#c8102e}
+  .dot-b{background:#1f6fd0}
+  .map-row{display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 14px;
+           height:48px;border-radius:10px;background:#fafbfc;margin-bottom:8px;font-size:13px;
+           background-size:cover;background-position:center center;background-repeat:no-repeat;
+           position:relative;overflow:hidden}
+  .map-scrim{position:absolute;inset:0;
+             background:linear-gradient(90deg,rgba(8,10,14,.80) 0%,rgba(8,10,14,.44) 46%,rgba(8,10,14,.66) 100%)}
+  .map-left{display:flex;align-items:center;gap:8px;font-weight:600;position:relative;z-index:1}
+  .map-row.has-bg .map-left{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+  .map-row.has-bg .dot{box-shadow:0 0 0 2px rgba(255,255,255,.55)}
+  .dot{width:6px;height:6px;border-radius:50%;background:#cfd6df}
+  .dot.live{background:#e53935}
+  .dot.completed{background:#9aa4b2}
+  .map-score{font-weight:700;font-variant-numeric:tabular-nums;position:relative;z-index:1}
+  .map-row.has-bg .map-score{background:rgba(255,255,255,.94);border-radius:7px;
+                             padding:5px 10px;line-height:1}
+  .map-score .w{color:#12161c}
+  .map-score .l{color:#9aa4b2}
+  .two-col{display:flex;gap:22px}
+  .col{flex:1;min-width:0}
+  .col + .col{border-left:1px solid #f0f2f5;padding-left:18px}
+  table.players{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{text-align:right;color:#98a2b3;font-weight:600;padding:4px 6px;font-size:11px}
+  th.name{text-align:left}
+  td{padding:7px 6px;border-top:1px solid #f0f2f5;text-align:right;
+     font-variant-numeric:tabular-nums}
+  td.name{text-align:left;font-weight:600}
+  .pname{display:flex;align-items:center;gap:7px}
+  .avatar{width:20px;height:20px;border-radius:50%;background:#eef1f5;position:relative;
+          overflow:hidden;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+          font-size:9px;color:#b3bcc8;font-weight:700}
+  .avatar .ph{display:none}
+  .avatar.noimg .ph{display:block}
+  .avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .r-high{color:#c62828;font-weight:700}
+  .r-mid{color:#b26a00;font-weight:700}
+  .r-low{color:#5f6b7a;font-weight:700}
+  .footer{margin-top:16px;padding-top:10px;border-top:1px solid #f0f2f5;
+          display:flex;justify-content:space-between;font-size:11px;color:#a3acb9}
+  .empty{font-size:12px;color:#a3acb9;padding:6px 2px}
+  .hint{margin-top:16px;padding:12px 14px;background:#fafbfc;border-radius:10px;
+        font-size:12px;color:#8a94a3;text-align:center}
+</style>
+</head>
+<body>
+<div id="card">
+  <div class="top">
+    <div class="event">{{ event_name }}</div>
+    <div class="badge {{ status_class }}">{{ status_text }}</div>
+  </div>
+  <div class="meta">{{ meta_line }}</div>
+  {% if countdown %}<div class="countdown">⏰ {{ countdown }}</div>{% endif %}
+
+  <div class="score-row">
+    <div class="team">
+      <div class="logo{% if not team_a_logo %} noimg{% endif %}">
+        {% if team_a_logo %}<img src="{{ team_a_logo }}" alt="" onerror="this.remove();this.parentNode.classList.add('noimg')">{% endif %}
+        <span class="ph">{{ team_a_initial }}</span>
+      </div>
+      <div class="tname">{{ team_a }}</div>
+    </div>
+    <div class="score">
+      <div class="nums">
+        <span class="{{ score_a_class }}">{{ score_a }}</span><span class="colon">:</span><span class="{{ score_b_class }}">{{ score_b }}</span>
+      </div>
+      <div class="sub">{{ score_hint }}</div>
+    </div>
+    <div class="team">
+      <div class="logo{% if not team_b_logo %} noimg{% endif %}">
+        {% if team_b_logo %}<img src="{{ team_b_logo }}" alt="" onerror="this.remove();this.parentNode.classList.add('noimg')">{% endif %}
+        <span class="ph">{{ team_b_initial }}</span>
+      </div>
+      <div class="tname">{{ team_b }}</div>
+    </div>
+  </div>
+
+  {% if not maps and not a_players and not b_players %}
+  <div class="hint">{{ empty_hint }}</div>
+  {% endif %}
+
+  {% if support %}
+  <div class="section">
+    <div class="section-title">战队支持率{% if support.total %} · {{ support.total }} 人参与{% endif %}</div>
+    <div class="sup-wrap">
+      <div class="sup-nums">
+        <span class="sup-a">{{ support.a }}%</span>
+        <span class="sup-t">{{ team_a }} ｜ {{ team_b }}</span>
+        <span class="sup-b">{{ support.b }}%</span>
+      </div>
+      <div class="sup-bar">
+        <div class="sup-seg sup-seg-a" style="width:{{ support.a }}%"></div>
+        <div class="sup-seg sup-seg-b" style="width:{{ support.b }}%"></div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if vrs_rows %}
+  <div class="section">
+    <div class="section-title">VRS 积分变动预测</div>
+    <table class="vrs">
+      <thead>
+        <tr><th class="name">战队</th><th>当前 VRS</th><th>排名</th><th>胜</th><th>负</th></tr>
+      </thead>
+      <tbody>
+        {% for v in vrs_rows %}
+        <tr>
+          <td class="name">
+            <div class="pname">
+              <div class="vrs-dot {{ 'dot-a' if v.is_a else 'dot-b' }}">{{ v.initial }}</div>
+              <span>{{ v.name }}</span>
+            </div>
+          </td>
+          <td class="mono">{{ v.score }}</td>
+          <td class="mono dim">{{ v.rank }}</td>
+          <td class="mono {{ v.win_cls }}">{{ v.win }}</td>
+          <td class="mono {{ v.lose_cls }}">{{ v.lose }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  {% if maps %}
+  <div class="section">
+    <div class="section-title">地图比分</div>
+    {% for m in maps %}
+    <div class="map-row{% if m.img %} has-bg{% endif %}"{% if m.img %} style="background-image:url('{{ m.img }}')"{% endif %}>
+      {% if m.img %}<div class="map-scrim"></div>{% endif %}
+      <div class="map-left"><span class="dot {{ m.cls }}"></span>{{ m.label }}</div>
+      <div class="map-score">
+        <span class="{{ 'w' if m.sa > m.sb else 'l' }}">{{ m.sa }}</span>
+        <span style="color:#c8ced8">:</span>
+        <span class="{{ 'w' if m.sb > m.sa else 'l' }}">{{ m.sb }}</span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if comments %}
+  <div class="section">
+    <div class="section-title">热评</div>
+    {% for c in comments %}
+    <div class="cmt">
+      <div class="cmt-head">
+        <span class="cmt-user">{{ c.user }}{% if c.region %} · {{ c.region }}{% endif %}</span>
+        <span class="cmt-like">👍 {{ c.likes }}</span>
+      </div>
+      <div class="cmt-body">{{ c.content }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if a_players or b_players %}
+  <div class="section">
+    <div class="section-title">选手数据</div>
+    <div class="two-col">
+      {% for group in [a_players, b_players] %}
+      <div class="col">
+        {% if group %}
+        <table class="players">
+          <thead>
+            <tr>
+              <th class="name">选手</th><th>K-D</th><th>±</th><th>ADR</th><th>RT</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in group %}
+            <tr>
+              <td class="name">
+                <div class="pname">
+                  <div class="avatar{% if not p.avatar %} noimg{% endif %}">
+                    {% if p.avatar %}<img src="{{ p.avatar }}" alt="" onerror="this.remove();this.parentNode.classList.add('noimg')">{% endif %}
+                    <span class="ph">{{ p.initial }}</span>
+                  </div>
+                  <span>{{ p.nickname }}</span>
+                </div>
+              </td>
+              <td>{{ p.kd }}</td>
+              <td>{{ p.swing }}</td>
+              <td>{{ p.adr }}</td>
+              <td class="{{ p.rating_cls }}">{{ p.rating }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <div class="empty">暂无选手数据</div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="footer">
+    <span>{{ footer_note }}</span>
+    <span>{{ generated_at }}</span>
+  </div>
+</div>
+</body>
+</html>
