@@ -8,7 +8,7 @@
 产物：与插件目录同级的 astrbot_plugin_csgo_match.zip
 
 包内结构与你手动压缩的一致：**文件直接位于 zip 根目录**，不套
-astrbot_plugin_wmpvp_csgo/ 前缀（解压到 data/plugins/<插件名>/ 即可）。
+astrbot_plugin_csgo_match/ 前缀（解压到 data/plugins/<插件名>/ 即可）。
 
 发布包只保留运行插件所需内容，以下开发产物一律排除：
     __pycache__ / data / *.pyc / .gitignore
@@ -21,14 +21,13 @@ import sys
 import zipfile
 from pathlib import Path
 
-PLUGIN_DIR_NAME = "astrbot_plugin_wmpvp_csgo"   # 本地插件目录名
-OUTPUT_NAME = "astrbot_plugin_csgo_match"          # 发布包 / 仓库名
+PLUGIN_DIR_NAME = "astrbot_plugin_csgo_match"   # 插件目录名 / 仓库名
+OUTPUT_NAME = PLUGIN_DIR_NAME                    # 发布包名与目录名一致
 SKIP_DIRS = {
     "__pycache__", "data", ".git", ".idea", ".vscode",
     "tests", "tools",          # 开发产物，不进发布包
 }
-SKIP_FILES = {f"{PLUGIN_DIR_NAME}.zip", f"{OUTPUT_NAME}.zip",
-              ".DS_Store", ".gitignore"}
+SKIP_FILES = {f"{OUTPUT_NAME}.zip", ".DS_Store", ".gitignore"}
 
 
 def main() -> int:
@@ -51,7 +50,8 @@ def main() -> int:
         for path in sorted(root.rglob("*")):
             if any(part in SKIP_DIRS for part in path.parts):
                 continue
-            if path.name in SKIP_FILES or path.suffix == ".pyc":
+            # 排除所有 zip：既避免把打包产物自己套进去，也避免历史产物混入
+            if path.name in SKIP_FILES or path.suffix in (".pyc", ".zip"):
                 continue
             if path.is_file():
                 rel = path.relative_to(root)

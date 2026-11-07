@@ -3,7 +3,7 @@
 离线冒烟测试（无需安装 AstrBot / 无需联网也能跑大部分用例）。
 
 用法：
-    cd astrbot_plugin_wmpvp_csgo
+    cd astrbot_plugin_csgo_match
     python tests/smoke_test.py
 
 覆盖：

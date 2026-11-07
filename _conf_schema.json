@@ -1,51 +1,4 @@
 {
-  "data_source_priority": {
-    "description": "数据源优先级（逗号分隔，靠前优先，失败自动回退）",
-    "type": "string",
-    "default": "5eplay,wanmei_data,wmpvp",
-    "hint": "可选值：5eplay（5EPlay 赛事中心）、wanmei_data（完美世界数据中心）、wmpvp（完美电竞网关）。三者都无需 Token。"
-  },
-  "api_base": {
-    "description": "完美电竞网关域名（wmpvp 源）",
-    "type": "string",
-    "default": "https://gwapi.pwesports.cn",
-    "hint": "无鉴权，一般无需修改"
-  },
-  "match_list_path": {
-    "description": "赛事列表接口路径",
-    "type": "string",
-    "default": "/eventcenter/app/csgo/event/getMatchList",
-    "hint": "按天查询，参数 matchTime=YYYY-MM-DD 00:00:00"
-  },
-  "detail_path": {
-    "description": "比赛详情接口路径",
-    "type": "string",
-    "default": "/eventcenter/app/csgo/event/getMatchDetail",
-    "hint": "参数 matchId，返回逐图比分与 5v5 选手数据"
-  },
-  "realtime_path": {
-    "description": "实时比分接口路径",
-    "type": "string",
-    "default": "/eventcenter/app/match/getMatchPlayerScoreListRealtime",
-    "hint": "参数 matchId，返回当前打到第几张图（boxNum）与实时选手数据"
-  },
-  "request_timeout": {
-    "description": "请求超时（秒）",
-    "type": "int",
-    "default": 10
-  },
-  "schedule_days": {
-    "description": "赛程预览天数",
-    "type": "int",
-    "default": 1,
-    "hint": "后台轮询与 /csgo 赛程 默认覆盖今天起的天数"
-  },
-  "demo_mode": {
-    "description": "演示模式",
-    "type": "bool",
-    "default": false,
-    "hint": "开启后用内置 Mock 数据响应所有查询，便于离线验证渲染与推送"
-  },
   "poll_enable": {
     "description": "启用后台轮询推送",
     "type": "bool",
@@ -81,24 +34,6 @@
     "type": "int",
     "default": 8
   },
-  "render_mode": {
-    "description": "图片渲染模式",
-    "type": "string",
-    "default": "auto",
-    "options": [
-      "auto",
-      "astrbot",
-      "playwright",
-      "text"
-    ],
-    "hint": "auto = html_render 失败后自动降级 Playwright；text = 只发纯文本"
-  },
-  "render_width": {
-    "description": "渲染视口宽度（像素）",
-    "type": "int",
-    "default": 720,
-    "hint": "需与模板中 #card 宽度一致（默认 720），否则截图右侧会留白"
-  },
   "push_map_start": {
     "description": "推送「图X开赛」通知",
     "type": "bool",
@@ -118,17 +53,6 @@
     "description": "单个会话最大订阅数",
     "type": "int",
     "default": 10
-  },
-  "test_api_cooldown": {
-    "description": "/csgo 测试 API 冷却时间（秒）",
-    "type": "int",
-    "default": 10,
-    "hint": "防止频繁调用给对方网关造成压力"
-  },
-  "test_command_admin_only": {
-    "description": "测试指令仅管理员可用",
-    "type": "bool",
-    "default": false
   },
   "push_preview": {
     "description": "赛前预告推送",
@@ -159,11 +83,5 @@
     "type": "string",
     "default": "",
     "hint": "如果留空，则自动使用 AstrBot 当前默认对话模型。如果需要独立模型，请填写 AstrBot 配置中的 Provider ID（如 'deepseek-chat'）。"
-  },
-  "chrome_path": {
-    "description": "Chrome/Edge 可执行文件路径（图片渲染兜底）",
-    "type": "string",
-    "default": "",
-    "hint": "留空则自动在 PATH 和系统常见安装路径里找。仅在 html_render 与 Playwright 都不可用时才用到。"
   }
 }

@@ -1,4 +1,4 @@
-name: astrbot_plugin_wmpvp_csgo
+name: astrbot_plugin_csgo_match
 display_name: CS 赛事助手
 desc: CS2/CSGO 赛事查询、队伍/赛事订阅与自动推送。赛程、比分、逐图 5v5 数据、战队支持率、VRS 积分、热评，多数据源自动回退，无需 API Key。
 version: v1.2.0

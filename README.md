@@ -109,10 +109,11 @@ git clone https://github.com/shumatusu/astrbot_plugin_csgo_match.git astrbot_plu
 | `preview_minutes` | `15` | 提前多少分钟推预告 |
 | `push_map_start` / `push_map_end` / `push_match_end` | `true` | 图开赛 / 图结束 / 整场结束推送开关 |
 | `llm_provider_id` | 空 | 赛事订阅语义匹配用的 LLM。留空则用 AstrBot 当前对话模型 |
-| `render_mode` | `auto` | 图片渲染方式，一般用默认即可 |
 | `max_subs_per_session` | `10` | 每个会话最多订阅几条 |
+| `interval_live` / `interval_today` / `interval_idle` | `60` / `300` / `600` | 有直播 / 今日有赛 / 空闲时的轮询间隔（秒） |
+| `interval_night` + `night_start_hour` / `night_end_hour` | `1800` / `1` / `8` | 夜间免打扰时段与间隔 |
 
-完整配置说明见 `_conf_schema.json`。
+接口地址、渲染实现、调试开关等**开发者向配置已从 WebUI 隐藏**，默认值即可正常工作。
 
 **LLM 是可选的**：赛事名先用字符串匹配，匹配不到才会调用 LLM 做语义兜底（3 秒超时、失败静默跳过）。不配 LLM 不影响其他功能。
 
@@ -134,7 +135,8 @@ git clone https://github.com/shumatusu/astrbot_plugin_csgo_match.git astrbot_plu
 
 图片渲染有四级兜底：`AstrBot html_render` → `Playwright` → 本机 `Chrome/Edge` → 纯文字。
 
-发 `/csgo 诊断 渲染` 可以实测一次，诊断里的「上次渲染」会写明每一级的实际结果。如果前三级都不可用，可以在 `chrome_path` 里手动填浏览器路径。
+发 `/csgo 诊断 渲染` 可以实测一次，诊断里的「上次渲染」会写明每一级的实际结果。
+如果前三级都不可用，可以在插件配置文件里手动加一行 `chrome_path` 指向浏览器可执行文件（这是高级项，没有放进 WebUI 面板）。
 
 ### 支持率 / VRS / 热评有时不显示
 

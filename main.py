@@ -64,7 +64,7 @@ except Exception:  # pragma: no cover
         MessageChain = None
 
 
-PLUGIN_NAME = "astrbot_plugin_wmpvp_csgo"
+PLUGIN_NAME = "astrbot_plugin_csgo_match"
 PLUGIN_VERSION = "1.2.0"
 
 # 数据卡宽度。模板 CSS 的 #card 宽度、<meta viewport> 与 t2i 的视口宽度

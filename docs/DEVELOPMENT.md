@@ -1,4 +1,4 @@
-# astrbot_plugin_wmpvp_csgo
+# astrbot_plugin_csgo_match
 
 完美世界电竞 CSGO 赛事助手（AstrBot 插件）。赛事查询、队伍/赛事订阅、地图级状态推送、三级渲染降级、多群隔离，内置开发者调试指令集。
 
@@ -392,7 +392,7 @@ Intel Extreme Masters BeiJing 2026
 
 ## 安装
 
-1. 将整个 `astrbot_plugin_wmpvp_csgo` 目录放入 AstrBot 的 `data/plugins/` 下。
+1. 将整个 `astrbot_plugin_csgo_match` 目录放入 AstrBot 的 `data/plugins/` 下。
 2. 安装依赖：
 
 ```bash
@@ -429,6 +429,13 @@ playwright install chromium
 | `/csgo 测试 API` | 探测列表/详情/实时三个接口 |
 
 ## 配置项
+
+> **注意**：接口地址（`api_base` / `match_list_path` / `detail_path` / `realtime_path`）、
+> 多源优先级（`data_source_priority`）、渲染实现（`render_mode` / `render_width` / `chrome_path`）、
+> 超时与调试开关（`request_timeout` / `schedule_days` / `demo_mode` /
+> `test_api_cooldown` / `test_command_admin_only`）已从 `_conf_schema.json` 移除，
+> WebUI 不再显示。代码里仍用 `_cfg(key, 默认值)` 读取，需要时可直接手改插件配置文件生效。
+
 
 | 键 | 默认 | 说明 |
 | --- | --- | --- |
@@ -550,7 +557,7 @@ python tools/pack.py
 ## 目录结构
 
 ```text
-astrbot_plugin_wmpvp_csgo/
+astrbot_plugin_csgo_match/
 ├── main.py                  # 插件主体（客户端、指令、轮询、渲染）
 ├── metadata.yaml
 ├── _conf_schema.json
